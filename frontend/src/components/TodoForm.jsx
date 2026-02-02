@@ -1,13 +1,29 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 
-function TodoForm({ addTodo }) {
+function TodoForm({ addTodo, editingTodo, updateTodo, cancelEdit }) {
   const [title, setTitle] = useState("");
+
+  // Kun editingTodo vaihtuu, esitäytä kenttä tai tyhjennä
+  useEffect(() => {
+    if (editingTodo) {
+      setTitle(editingTodo.text); // backendiltä tuleva kenttä
+    } else {
+      setTitle("");
+    }
+  }, [editingTodo]);
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    if (!title.trim()) return;
-    addTodo(title);
-    setTitle("");
+    const trimmed = title.trim();
+    if (!trimmed) return;
+
+    if (editingTodo) {
+      // muokkaus
+      updateTodo(editingTodo._id, trimmed);
+    } else {
+      // uusi
+      addTodo(trimmed);
+    }
   };
 
   return (
@@ -18,7 +34,14 @@ function TodoForm({ addTodo }) {
         value={title}
         onChange={(e) => setTitle(e.target.value)}
       />
-      <button>Lisää</button>
+      <button type="submit">
+        {editingTodo ? "Tallenna muokkaus" : "Lisää"}
+      </button>
+      {editingTodo && (
+        <button type="button" onClick={cancelEdit}>
+          Peru
+        </button>
+      )}
     </form>
   );
 }
