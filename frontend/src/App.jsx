@@ -1,25 +1,25 @@
 import { useEffect, useState } from "react";
-import TodoForm from "./components/TodoForm";
-import TodoList from "./components/TodoList";
+//import TodoForm from "./components/TodoForm";
+//import TodoList from "./components/TodoList";
 
-const API_URL = "http://localhost:5000/todos";
+const API_URL = "http://localhost:5000/";
 
 function App() {
   const [todos, setTodos] = useState([]);
 
   // Hae tehtävät backendistä
   useEffect(() => {
-    fetch(API_URL)
+    fetch(API_URL + "api/todos")
       .then(res => res.json())
       .then(data => setTodos(data));
   }, []);
 
   // Lisää tehtävä
   const addTodo = async (title) => {
-    const res = await fetch(API_URL, {
+    const res = await fetch(API_URL + "api/todos", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ title })
+      body: JSON.stringify({ text: title })
     });
 
     const newTodo = await res.json();
@@ -30,10 +30,10 @@ function App() {
   const toggleTodo = async (id) => {
     const todo = todos.find(t => t._id === id);
 
-    const res = await fetch(`${API_URL}/${id}`, {
-      method: "PUT",
+    const res = await fetch(`${API_URL}api/todos/${id}`, {
+      method: "PATCH",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ completed: !todo.completed })
+      body: JSON.stringify({ done: !todo.done })
     });
 
     const updatedTodo = await res.json();
@@ -42,7 +42,7 @@ function App() {
 
   // Poista tehtävä
   const deleteTodo = async (id) => {
-    await fetch(`${API_URL}/${id}`, { method: "DELETE" });
+    await fetch(`${API_URL}api/todos/${id}`, { method: "DELETE" });
     setTodos(todos.filter(t => t._id !== id));
   };
 
