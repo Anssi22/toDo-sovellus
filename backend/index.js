@@ -29,9 +29,38 @@ MongoDB().then(() => {
 // malli
 const todoSchema = new mongoose.Schema({
     text: { type: String, required: true },
+    done: { type: Boolean, default: false }
+});
+
+const Todo = mongoose.model("Todo", todoSchema);
+
 // reitit
+// terveys
 app.get("/api/health", (req, res) => {
     res.send("API toimii!");
 })
-
-
+//haku
+app.get("/api/todos", async (req, res) => {
+    const tehtavat = await Todo.find({});
+    res.json(tehtavat);
+})
+// luonti
+app.post("/api/todos", async (req, res) => {
+  const uusiTehtava = new Todo({ text: req.body.text })
+  const saved = await uusiTehtava.save()
+  res.status(201).json(saved)
+})
+// päivitys
+app.patch("/api/todos/:id", async (req, res) => {
+  const updated = await Todo.findByIdAndUpdate(
+    req.params.id,
+    { done: req.body.done },
+    { new: true }
+  )
+  res.json(updated)
+})
+// poista
+app.delete("/api/todos/:id", async (req, res) => {
+  await Todo.findByIdAndDelete(req.params.id)
+  res.status(204).end()
+})
