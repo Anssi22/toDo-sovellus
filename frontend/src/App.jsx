@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import TodoForm from "./components/TodoForm";
-import TodoList from "./components/TodoList";
+import TodoList from "./components/TodoList.jsx";
 
 const API_URL = "http://localhost:5000/todos";
 
