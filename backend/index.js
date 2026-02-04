@@ -55,6 +55,7 @@ app.post("/api/todos", async (req, res) => {
   res.status(201).json(saved);
 });
 
+// päivitys
 app.patch("/api/todos/:id", async (req, res) => {
   const update = {};
 

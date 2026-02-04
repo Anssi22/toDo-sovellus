@@ -30,6 +30,7 @@ function App() {
   // Päivitä tehtävän tila
   const toggleTodo = async (id) => {
     const todo = todos.find(t => t._id === id);
+    if (!todo) return;
 
     const res = await fetch(`${API_URL}api/todos/${id}`, {
       method: "PATCH",
@@ -37,6 +38,11 @@ function App() {
       body: JSON.stringify({ done: !todo.done })
     });
 
+    if (!res.ok) {
+      console.error("Toggle failed", await res.text());
+      return;
+    }
+    
     const updatedTodo = await res.json();
     setTodos(todos.map(t => t._id === id ? updatedTodo : t));
   };
@@ -58,7 +64,7 @@ function App() {
     if (!todo) return;
 
     const res = await fetch(`${API_URL}api/todos/${id}`, {
-      method: "PATCH", // tai PUT
+      method: "PATCH",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ text: newText, done: todo.done }),
     });
